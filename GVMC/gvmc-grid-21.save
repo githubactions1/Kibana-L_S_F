@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# Define the API endpoint URL
+api_url="http://waterworks.digitalrupay.com/apirt1/watervalve/ontimerealselist"
+
+# Define the Elastic index name
+index_name="gvmc-grid-21"
+
+output_file="bulk_request_body.json"
+
+# Function to create the bulk request body for each data item
+create_bulk_request_body() {
+    local data="$1"
+    local index_name="$2"
+   # local id=$(echo "$data" | jq -r)
+
+    # Create the bulk request body for each data item
+    printf '{"index": {}}\n'
+    printf '%s\n\n' "$data"
+}
+
+# Define the "frmdate" and "todate" variables
+#frmdate=$(date +"%Y-%m-%d %H:%M")
+#todate=$(date +"%Y-%m-%d %H:%M" -d "+7 days")
+
+# Create the request body with "frmdate" and "todate"
+#request_body='{
+#    "frmdate":"2023-05-01 07:30",
+#    "todate":"2023-05-23 15:30"
+#}'
+
+#request_body='{
+#  "zone_id": "2"
+# }'
+
+# Make the POST API call and retrieve the response
+response=$(curl -X GET -H "Content-Type: application/json" -H "x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbXBfaWQiOjgwLCJhZG1pbl9pZCI6MSwiZW1wX3VzZXJuYW1lIjoic3VwZXJhZG1pbiIsImVtcF9wYXNzd29yZCI6Ijg4OWEzYTc5MWIzODc1Y2ZhZTQxMzU3NGI1M2RhNGJiOGE5MGQ1M2UiLCJlbXBfZmlyc3RfbmFtZSI6IlN1cGVyIiwiZW1wX2xhc3RfbmFtZSI6IkFkbWluIiwiZW1wX2RlcHQiOjEsImVtcF9kZXNpZ25hdGlvbiI6IjEiLCJlbXBfcmVwb3J0aW5nIjoiIiwiZW1wX3Bob25lIjoiIiwiZW1wX21vYmlsZSI6OTk5OTk5OTk5OSwiZW1wX2VtYWlsIjpudWxsLCJlbXBfY29kZSI6bnVsbCwiZW1wX3JvbGUiOjQsImVtcF9lbWFpbDIiOm51bGwsImVtcF9tb2JpbGUyIjpudWxsLCJlbXBfZ2VuZGVyIjpudWxsLCJicmFuY2giOm51bGwsIndvcmtfbG9jYXRpb24iOiI5Niw5Nyw5OCIsImNvbXBhbnlfbmFtZSI6IkdWTUMiLCJlbXBfZG9iIjpudWxsLCJlbXBfZG9qIjpudWxsLCJoX25vIjpudWxsLCJzdHJlZXQiOm51bGwsImxhbmRtYXJrIjpudWxsLCJjaXR5IjpudWxsLCJzdGF0ZSI6bnVsbCwicGluY29kZSI6bnVsbCwiaF9ubzIiOm51bGwsInN0cmVldDIiOm51bGwsImxhbmRtYXJrMiI6bnVsbCwiY2l0eTIiOm51bGwsInN0YXRlMiI6bnVsbCwicGluY29kZTIiOm51bGwsImRhdGVfY3JlYXRlZCI6bnVsbCwidXBkYXRlZF9vbiI6bnVsbCwibm90ZXMiOiJHVk1DIEFkbWluIiwiZW1wX2ltYWdlIjpudWxsLCJlbXBfc3RhdHVzIjoxLCJlbXBfc2hvdyI6MSwiZGV2aWNlX2lkIjpudWxsLCJlbXBfbGFzdF93b3JraW5nIjpudWxsLCJkaXNhYmxlX3JlYXNvbiI6bnVsbCwiZGlzYWJsZV9yZW1hcmtzIjpudWxsLCJlbXBfc2FsYXJ5IjowLCJlbXBfcmVjcnVpdG1lbnRfbW9kZSI6bnVsbCwiZW1wX3dvcmtfc3ViX2xvY2F0aW9uIjpudWxsLCJpbWVpXzEiOiJTUDFBLjIxMDgxMi4wMTYiLCJpbWVpXzIiOm51bGwsImZjbV9pZCI6ImZNUVZLc3NTUjllRHBocHNtZUotSVk6QVBBOTFiRXhkQWRLYjZlLTRuLU1uOFFoUFp2MmpTQ21hZnNMZzRCYWl0ZnE5SzhxMHNXekQ5RGgtWTliRXpOQUhRME85alFjZlI1SERWRDZEejloRnd2Y2hCVnhJQmEzUDA2aE1RVlExREwxZy03RXdsOGlmcm82QWhMOFg0TUtZZWotSDRPVUZxRi0iLCJoaWdoZXN0X3F1YWxpZmljYXRpb24iOm51bGwsIndhcmRfaWRzIjoiNSw2LDcsOCIsImxvZ2luX2lkIjozODc2LCJpYXQiOjE2ODYyMDczMTYsImV4cCI6MTY4NjIxODExNn0.N8u_3UURfaFKUiqQD_IHpdz_Y0JR2Fre44UFfWXH-nc" "$api_url")
+# Make the POST API call and retrieve the response
+response=$(curl -X GET -H "Content-Type: application/json" -H "x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbXBfaWQiOjgwLCJhZG1pbl9pZCI6MSwiZW1wX3VzZXJuYW1lIjoic3VwZXJhZG1pbiIsImVtcF9wYXNzd29yZCI6Ijg4OWEzYTc5MWIzODc1Y2ZhZTQxMzU3NGI1M2RhNGJiOGE5MGQ1M2UiLCJlbXBfZmlyc3RfbmFtZSI6IlN1cGVyIiwiZW1wX2xhc3RfbmFtZSI6IkFkbWluIiwiZW1wX2RlcHQiOjEsImVtcF9kZXNpZ25hdGlvbiI6IjEiLCJlbXBfcmVwb3J0aW5nIjoiIiwiZW1wX3Bob25lIjoiIiwiZW1wX21vYmlsZSI6OTk5OTk5OTk5OSwiZW1wX2VtYWlsIjpudWxsLCJlbXBfY29kZSI6bnVsbCwiZW1wX3JvbGUiOjQsImVtcF9lbWFpbDIiOm51bGwsImVtcF9tb2JpbGUyIjpudWxsLCJlbXBfZ2VuZGVyIjpudWxsLCJicmFuY2giOm51bGwsIndvcmtfbG9jYXRpb24iOiI5Niw5Nyw5OCIsImNvbXBhbnlfbmFtZSI6IkdWTUMiLCJlbXBfZG9iIjpudWxsLCJlbXBfZG9qIjpudWxsLCJoX25vIjpudWxsLCJzdHJlZXQiOm51bGwsImxhbmRtYXJrIjpudWxsLCJjaXR5IjpudWxsLCJzdGF0ZSI6bnVsbCwicGluY29kZSI6bnVsbCwiaF9ubzIiOm51bGwsInN0cmVldDIiOm51bGwsImxhbmRtYXJrMiI6bnVsbCwiY2l0eTIiOm51bGwsInN0YXRlMiI6bnVsbCwicGluY29kZTIiOm51bGwsImRhdGVfY3JlYXRlZCI6bnVsbCwidXBkYXRlZF9vbiI6bnVsbCwibm90ZXMiOiJHVk1DIEFkbWluIiwiZW1wX2ltYWdlIjpudWxsLCJlbXBfc3RhdHVzIjoxLCJlbXBfc2hvdyI6MSwiZGV2aWNlX2lkIjpudWxsLCJlbXBfbGFzdF93b3JraW5nIjpudWxsLCJkaXNhYmxlX3JlYXNvbiI6bnVsbCwiZGlzYWJsZV9yZW1hcmtzIjpudWxsLCJlbXBfc2FsYXJ5IjowLCJlbXBfcmVjcnVpdG1lbnRfbW9kZSI6bnVsbCwiZW1wX3dvcmtfc3ViX2xvY2F0aW9uIjpudWxsLCJpbWVpXzEiOiJTUDFBLjIxMDgxMi4wMTYiLCJpbWVpXzIiOm51

@@ -1,0 +1,56 @@
+#!/bin/bash
+
+# Define the API endpoint URL
+api_url="http://waterworks.digitalrupay.com/apirt1/waterflow/monthlhynrmlsamplelist"
+
+# Define the Elastic index name
+index_name="gvmc-grid-6"
+
+output_file="bulk_request_body.json"
+
+# Function to create the bulk request body for each data item
+create_bulk_request_body() {
+    local data="$1"
+    local index_name="$2"
+   # local id=$(echo "$data" | jq -r)
+
+    # Create the bulk request body for each data item
+    printf '{"index": {}}\n'
+    printf '%s\n\n' "$data"
+}
+
+# Define the "frmdate" and "todate" variables
+#frmdate=$(date +"%Y-%m-%d %H:%M")
+#todate=$(date +"%Y-%m-%d %H:%M" -d "+7 days")
+
+# Create the request body with "frmdate" and "todate"
+#request_body='{
+#    "frmdate":"2023-05-01 07:30",
+#    "todate":"2023-05-23 15:30"
+#}'
+
+#request_body='{
+#  "zone_id": "2"
+# }'
+
+# Make the POST API call and retrieve the response
+response=$(curl -X GET -H "Content-Type: application/json" -H "x-access-token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbXBfaWQiOjgwLCJhZG1pbl9pZCI6MSwiZW1wX3VzZXJuYW1lIjoic3VwZXJhZG1pbiIsImVtcF9wYXNzd29yZCI6Ijg4OWEzYTc5MWIzODc1Y2ZhZTQxMzU3NGI1M2RhNGJiOGE5MGQ1M2UiLCJlbXBfZmlyc3RfbmFtZSI6IlN1cGVyIiwiZW1wX2xhc3RfbmFtZSI6IkFkbWluIiwiZW1wX2RlcHQiOjEsImVtcF9kZXNpZ25hdGlvbiI6IjEiLCJlbXBfcmVwb3J0aW5nIjoiIiwiZW1wX3Bob25lIjoiIiwiZW1wX21vYmlsZSI6OTk5OTk5OTk5OSwiZW1wX2VtYWlsIjpudWxsLCJlbXBfY29kZSI6bnVsbCwiZW1wX3JvbGUiOjQsImVtcF9lbWFpbDIiOm51bGwsImVtcF9tb2JpbGUyIjpudWxsLCJlbXBfZ2VuZGVyIjpudWxsLCJicmFuY2giOm51bGwsIndvcmtfbG9jYXRpb24iOiI5Niw5Nyw5OCIsImNvbXBhbnlfbmFtZSI6IkdWTUMiLCJlbXBfZG9iIjpudWxsLCJlbXBfZG9qIjpudWxsLCJoX25vIjpudWxsLCJzdHJlZXQiOm51bGwsImxhbmRtYXJrIjpudWxsLCJjaXR5IjpudWxsLCJzdGF0ZSI6bnVsbCwicGluY29kZSI6bnVsbCwiaF9ubzIiOm51bGwsInN0cmVldDIiOm51bGwsImxhbmRtYXJrMiI6bnVsbCwiY2l0eTIiOm51bGwsInN0YXRlMiI6bnVsbCwicGluY29kZTIiOm51bGwsImRhdGVfY3JlYXRlZCI6bnVsbCwidXBkYXRlZF9vbiI6bnVsbCwibm90ZXMiOiJHVk1DIEFkbWluIiwiZW1wX2ltYWdlIjpudWxsLCJlbXBfc3RhdHVzIjoxLCJlbXBfc2hvdyI6MSwiZGV2aWNlX2lkIjpudWxsLCJlbXBfbGFzdF93b3JraW5nIjpudWxsLCJkaXNhYmxlX3JlYXNvbiI6bnVsbCwiZGlzYWJsZV9yZW1hcmtzIjpudWxsLCJlbXBfc2FsYXJ5IjowLCJlbXBfcmVjcnVpdG1lbnRfbW9kZSI6bnVsbCwiZW1wX3dvcmtfc3ViX2xvY2F0aW9uIjpudWxsLCJpbWVpXzEiOiJTUDFBLjIxMDgxMi4wMTYiLCJpbWVpXzIiOm51bGwsImZjbV9pZCI6ImZNUVZLc3NTUjllRHBocHNtZUotSVk6QVBBOTFiRXhkQWRLYjZlLTRuLU1uOFFoUFp2MmpTQ21hZnNMZzRCYWl0ZnE5SzhxMHNXekQ5RGgtWTliRXpOQUhRME85alFjZlI1SERWRDZEejloRnd2Y2hCVnhJQmEzUDA2aE1RVlExREwxZy03RXdsOGlmcm82QWhMOFg0TUtZZWotSDRPVUZxRi0iLCJoaWdoZXN0X3F1YWxpZmljYXRpb24iOm51bGwsIndhcmRfaWRzIjoiNSw2LDcsOCIsImxvZ2luX2lkIjozODU3LCJpYXQiOjE2ODYxNDA1MjEsImV4cCI6MTY4NjE1MTMyMX0.EFsv5SVH73gNgYAXOsQatHj7Xs3L4qD47PMO8fmF7y4" -d "$request_body" "$api_url")
+
+echo $response
+
+# Extract the data array from the response
+data_array=$(echo "$response" | jq -c '.data[]')
+
+# Process each data item and create the bulk request body
+bulk_request_body=""
+
+while IFS= read -r data; do
+    bulk_request_body+=$(create_bulk_request_body "$data" "$index_name")
+    bulk_request_body+=$'\n'
+done <<< "$data_array"
+
+echo "$bulk_request_body" > "$output_file"
+
+# Send the bulk request to Elasticsearch
+curl -s -XPOST "http://localhost:9200/gvmc-grid-6/_doc/_bulk" -H "Content-Type: application/json" -H "Authorization: ApiKey S2o3LWU0Z0JTcDFCU1hiazd4YUs6dlNkSGNsSWlTUlNRU2ppbElXLVNzQQ==" --data-binary "@$output_file"
+

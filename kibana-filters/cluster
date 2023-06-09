@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Define the API endpoint URL
+api_url="http://sify.digitalrupay.com/devapirt1/sify/kibana/getCluster"
+
+# Define the Elastic index name
+index_name="cluster"
+
+output_file="bulk_request_body.json"
+
+# Function to create the bulk request body for each data item
+create_bulk_request_body() {
+    local data="$1"
+    local index_name="$2"
+   # local id=$(echo "$data" | jq -r)
+
+    # Create the bulk request body for each data item
+    printf '{"index": {}}\n'
+    printf '%s\n\n' "$data"
+}
+
+# Define the "frmdate" and "todate" variables
+#frmdate=$(date +"%Y-%m-%d %H:%M")
+#todate=$(date +"%Y-%m-%d %H:%M" -d "+7 days")
+
+# Create the request body with "frmdate" and "todate"
+#request_body='{
+#    "frmdate":"2023-05-01 07:30",
+#    "todate":"2023-05-23 15:30"
+#}'
+
+request_body='{
+  "zone_id":"1,2,3,4",
+  "state_id":"1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23"
+}'
+
+# Make the POST API call and retrieve the response
+response=$(curl -X POST -H "Content-Type: application/json" -H "access-key: 047af-4b3dc3-2af5c-da17433-e4662d-71477f2e" -d "$request_body" "$api_url")
+
+echo $response
+
+# Extract the data array from the response
+data_array=$(echo "$response" | jq -c '.data[]')
+
+# Process each data item and create the bulk request body
+bulk_request_body=""
+
+
+while IFS= read -r data; do
+    bulk_request_body+=$(create_bulk_request_body "$data" "$index_name")
+    bulk_request_body+=$'\n'
+done <<< "$data_array"
+
+echo "$bulk_request_body" > "$output_file"
+
+# Send the bulk request to Elasticsearch
+curl -s -XPOST "http://3.6.78.214:9200/cluster/_doc/_bulk" -H "Content-Type: application/json" -H "Authorization: ApiKey S2o3LWU0Z0JTcDFCU1hiazd4YUs6dlNkSGNsSWlTUlNRU2ppbElXLVNzQQ==" --data-binary "@$output_file"
